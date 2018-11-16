@@ -8,9 +8,9 @@
           </div>
           <div class="center" box="1" flex>
             <div class="select-font" flex items="center" v-for="item in fonts"
-                 :key="item" @click="currentFont = item">
+                 :key="item" @click="setFontSize(item)">
               <span></span>
-              <div class="circle" v-show="currentFont === item"></div>
+              <div class="circle" v-show="defaultFontSize === item"></div>
             </div>
           </div>
           <div class="right">
@@ -34,13 +34,18 @@ export default {
   data () {
     return {
       fonts: [12, 14, 16, 18, 20],
-      currentFont: 14,
       show_font: false
     }
+  },
+  props: {
+    defaultFontSize: Number
   },
   methods: {
     show_font_fun () {
       this.show_font = !this.show_font
+    },
+    setFontSize (item) {
+      this.$emit('setFontSize', item)
     }
   }
 }
@@ -96,9 +101,14 @@ export default {
             width: 1px; height: 20%; background-color: #d6d6d6;
           }
           .circle{
-            width: 12px; height: 12px; border-radius: 50%; background-color: #fff;
+            width: 16px; height: 16px; border-radius: 50%; background-color: #fff;
             border: 1px solid #cfcfcf;position: absolute;
-            left: 50%; margin-left: -6px;
+            left: 50%; margin-left: -8px; box-shadow: 0 0 4px rgba(0,0,0,0.2);
+            &:before{
+              content: ''; width: 4px; height: 4px; background-color: #111;
+              border-radius: 50%; position: absolute; left: 50%; top: 50%;
+              transform: translate(-50%, -50%);
+            }
           }
         }
       }

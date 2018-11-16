@@ -12,7 +12,7 @@
       </div>
     </div>
     <transition name="slide-up">
-      <FootBar v-show="show"></FootBar>
+      <FootBar v-show="show" @setFontSize="setFontSize" :defaultFontSize="defaultFontSize"></FootBar>
     </transition>
   </div>
 </template>
@@ -26,7 +26,8 @@ export default {
   name: 'Ebook',
   data () {
     return {
-      show: false
+      show: false,
+      defaultFontSize: 20
     }
   },
   components: {
@@ -45,7 +46,14 @@ export default {
       })
       // 通过Rendtion.display 渲染电子书
       this.rendition.display()
-      console.log(this.book)
+      // 获取theme 对象
+      this.themes = this.rendition.themes
+      this.setFontSize(this.defaultFontSize)
+    },
+    // 设置字体
+    setFontSize (fontSize) {
+      this.defaultFontSize = fontSize
+      this.themes && this.themes.fontSize(fontSize + 'px')
     },
     // 上一页
     prev () {
