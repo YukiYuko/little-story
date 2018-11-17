@@ -12,7 +12,7 @@
       </div>
     </div>
     <transition name="slide-up">
-      <FootBar v-show="show" @setFontSize="setFontSize" :defaultFontSize="defaultFontSize"></FootBar>
+      <FootBar v-show="show" :show="show" @setFontSize="setFontSize" :defaultFontSize="defaultFontSize"></FootBar>
     </transition>
   </div>
 </template>

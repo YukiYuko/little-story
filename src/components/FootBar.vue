@@ -19,10 +19,18 @@
         </div>
       </div>
     </transition>
+    <transition name="slide-up">
+      <div class="themes" flex items="center" v-show="show_themes">
+        <div class="default" box="1"></div>
+        <div class="eye" box="1"></div>
+        <div class="night" box="1"></div>
+        <div class="gold" box="1"></div>
+      </div>
+    </transition>
     <div class="footBarBox" flex justify="between" items="center">
       <i class="iconfont icon-mulu"></i>
       <i class="iconfont icon-jindutiao"></i>
-      <i class="iconfont icon-liangdu"></i>
+      <i @click="show_themes_fun" class="iconfont icon-liangdu"></i>
       <i @click="show_font_fun" class="iconfont icon-ziti"></i>
     </div>
   </div>
@@ -34,15 +42,27 @@ export default {
   data () {
     return {
       fonts: [12, 14, 16, 18, 20],
-      show_font: false
+      show_font: false,
+      show_themes: false
     }
   },
   props: {
-    defaultFontSize: Number
+    defaultFontSize: Number,
+    show: Boolean
+  },
+  watch: {
+    show: function (val) {
+      if (!val) {
+        this.show_font = false
+      }
+    }
   },
   methods: {
     show_font_fun () {
       this.show_font = !this.show_font
+    },
+    show_themes_fun () {
+      this.show_themes = !this.show_themes
     },
     setFontSize (item) {
       this.$emit('setFontSize', item)
@@ -57,7 +77,7 @@ export default {
   position: absolute; left: 0; bottom: 0; width: 100%; height: 0.9rem;
   @include drop-shadow-top; z-index: 100; background-color: #fff;
   .footBarBox{
-    height: 100%;
+    height: 100%; position: relative; background-color: #fff;
     i{
       width: 25%; font-size: 0.36rem;
     }
@@ -111,6 +131,29 @@ export default {
             }
           }
         }
+      }
+    }
+  }
+  /*主题*/
+  .themes{
+    height: 1rem; position: absolute; width: 100%; left: 0; bottom: 0.9rem;
+    @include drop-shadow-top; background-color: #fff;
+    &:before{
+      @include bottom-line;
+    }
+    div{
+      margin: 0 0.1rem; height: 0.6rem;
+      &.default{
+        border: 1px solid #444;
+      }
+      &.eye{
+        background-color: aquamarine;
+      }
+      &.night{
+        background-color: #111;
+      }
+      &.gold{
+        background-color: antiquewhite;
       }
     }
   }
