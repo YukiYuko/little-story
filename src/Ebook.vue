@@ -12,7 +12,12 @@
       </div>
     </div>
     <transition name="slide-up">
-      <FootBar v-show="show" :show="show" @setFontSize="setFontSize" :defaultFontSize="defaultFontSize"></FootBar>
+      <FootBar v-show="show" :show="show"
+               @setFontSize="setFontSize"
+               @setTheme="setTheme"
+               :themeList="themeList"
+               :defaultFontSize="defaultFontSize"
+               :defaultTheme="defaultTheme"></FootBar>
     </transition>
   </div>
 </template>
@@ -27,7 +32,46 @@ export default {
   data () {
     return {
       show: false,
-      defaultFontSize: 20
+      defaultFontSize: 20,
+      defaultTheme: 'default',
+      themeList: [
+        {
+          'name': 'default',
+          'style': {
+            'body': {
+              'color': '#000',
+              'background': '#fff'
+            }
+          }
+        },
+        {
+          'name': 'eye',
+          'style': {
+            'body': {
+              'color': '#000',
+              'background': '#ceeaba'
+            }
+          }
+        },
+        {
+          'name': 'night',
+          'style': {
+            'body': {
+              'color': '#fff',
+              'background': '#000'
+            }
+          }
+        },
+        {
+          'name': 'gold',
+          'style': {
+            'body': {
+              'color': '#000',
+              'background': 'rgb(241,236,226)'
+            }
+          }
+        }
+      ]
     }
   },
   components: {
@@ -49,11 +93,24 @@ export default {
       // 获取theme 对象
       this.themes = this.rendition.themes
       this.setFontSize(this.defaultFontSize)
+      this.registerTheme()
+      this.themes.select(this.defaultTheme)
     },
     // 设置字体
     setFontSize (fontSize) {
       this.defaultFontSize = fontSize
       this.themes && this.themes.fontSize(fontSize + 'px')
+    },
+    // 注册主题
+    registerTheme () {
+      this.themeList.forEach(({name, style}) => {
+        this.themes.register(name, style)
+      })
+    },
+    // 设置主题
+    setTheme (name) {
+      this.defaultTheme = name
+      this.themes.select(this.defaultTheme)
     },
     // 上一页
     prev () {

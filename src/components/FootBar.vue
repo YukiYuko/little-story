@@ -21,10 +21,10 @@
     </transition>
     <transition name="slide-up">
       <div class="themes" flex items="center" v-show="show_themes">
-        <div class="default" box="1"></div>
-        <div class="eye" box="1"></div>
-        <div class="night" box="1"></div>
-        <div class="gold" box="1"></div>
+        <div @click="setTheme(item.name)" :class="[{active: defaultTheme === item.name},item.name]" box="1" v-for="(item, index) in themeList" :key="index">
+          <a></a>
+          <p>{{item.name}}</p>
+        </div>
       </div>
     </transition>
     <div class="footBarBox" flex justify="between" items="center">
@@ -48,7 +48,9 @@ export default {
   },
   props: {
     defaultFontSize: Number,
-    show: Boolean
+    show: Boolean,
+    themeList: Array,
+    defaultTheme: String
   },
   watch: {
     show: function (val) {
@@ -66,6 +68,9 @@ export default {
     },
     setFontSize (item) {
       this.$emit('setFontSize', item)
+    },
+    setTheme (item) {
+      this.$emit('setTheme', item)
     }
   }
 }
@@ -136,24 +141,42 @@ export default {
   }
   /*主题*/
   .themes{
-    height: 1rem; position: absolute; width: 100%; left: 0; bottom: 0.9rem;
+    min-height: 1rem; position: absolute; width: 100%; left: 0; bottom: 0.9rem;
+    color: #999;
+    a{
+      height: 0.6rem; display: block;
+    }
+    p{
+      padding: 0.1rem 0;
+    }
     @include drop-shadow-top; background-color: #fff;
+    &.active{
+      color: #111;
+    }
     &:before{
       @include bottom-line;
     }
     div{
-      margin: 0 0.1rem; height: 0.6rem;
+      margin: 0 0.1rem;
       &.default{
-        border: 1px solid #444;
+        a{
+          border: 1px solid #444;
+        }
       }
       &.eye{
-        background-color: aquamarine;
+        a{
+          background-color: aquamarine;
+        }
       }
       &.night{
-        background-color: #111;
+        a{
+          background-color: #111;
+        }
       }
       &.gold{
-        background-color: antiquewhite;
+        a{
+          background-color: antiquewhite;
+        }
       }
     }
   }
