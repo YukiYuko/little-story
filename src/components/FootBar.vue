@@ -62,9 +62,11 @@ export default {
   methods: {
     show_font_fun () {
       this.show_font = !this.show_font
+      this.show_themes = false
     },
     show_themes_fun () {
       this.show_themes = !this.show_themes
+      this.show_font = false
     },
     setFontSize (item) {
       this.$emit('setFontSize', item)
@@ -150,14 +152,14 @@ export default {
       padding: 0.1rem 0;
     }
     @include drop-shadow-top; background-color: #fff;
-    &.active{
-      color: #111;
-    }
     &:before{
       @include bottom-line;
     }
     div{
       margin: 0 0.1rem;
+      &.active{
+        color: #111;
+      }
       &.default{
         a{
           border: 1px solid #444;

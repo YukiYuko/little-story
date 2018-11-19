@@ -32,7 +32,7 @@ export default {
   data () {
     return {
       show: false,
-      defaultFontSize: 20,
+      defaultFontSize: 14,
       defaultTheme: 'default',
       themeList: [
         {
