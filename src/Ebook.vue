@@ -17,7 +17,11 @@
                @setTheme="setTheme"
                :themeList="themeList"
                :defaultFontSize="defaultFontSize"
-               :defaultTheme="defaultTheme"></FootBar>
+               :defaultTheme="defaultTheme"
+               :bookAvailable="bookAvailable"
+               @onProgressChange="onProgressChange"
+               :progress="progress"
+      ></FootBar>
     </transition>
   </div>
 </template>
@@ -26,7 +30,7 @@
 import Epub from 'epubjs'
 import HeadBar from '@/components/HeadBar'
 import FootBar from '@/components/FootBar'
-const DOWNLOAD_URL = '/static/book/64960.epub'
+const DOWNLOAD_URL = '/static/book/2013_Book_AgriculturalImplicationsOfTheF.epub'
 export default {
   name: 'Ebook',
   data () {
@@ -71,7 +75,9 @@ export default {
             }
           }
         }
-      ]
+      ],
+      bookAvailable: false,
+      progress: 0
     }
   },
   components: {
@@ -92,9 +98,23 @@ export default {
       this.rendition.display()
       // 获取theme 对象
       this.themes = this.rendition.themes
+      // 设置默认字体
       this.setFontSize(this.defaultFontSize)
+      // 注册主题
       this.registerTheme()
+      //  设置默认主题
       this.themes.select(this.defaultTheme)
+      // 获取locations对象
+      // 通过epubjs的钩子函数来实现
+      this.book.ready.then(() => {
+        return this.book.locations.generate()
+      }).then((result) => {
+        this.locations = this.book.locations
+        this.bookAvailable = true
+        // this.onProgressChange(2)
+      }).catch((err) => {
+        console.log(err)
+      })
     },
     // 设置字体
     setFontSize (fontSize) {
@@ -111,6 +131,12 @@ export default {
     setTheme (name) {
       this.defaultTheme = name
       this.themes.select(this.defaultTheme)
+    },
+    // 设置进度 progress 0-100
+    onProgressChange (progress) {
+      const percentage = progress / 100
+      const location = percentage > 0 ? this.locations.cfiFromPercentage(percentage) : 0
+      this.rendition.display(location)
     },
     // 上一页
     prev () {

@@ -1,5 +1,6 @@
 <template>
   <div class="footBar">
+    <!--字体设置-->
     <transition name="slide-up">
       <div class="font-setting" v-show="show_font">
         <div class="font-setting-warp" flex justify="between" items="center">
@@ -19,6 +20,7 @@
         </div>
       </div>
     </transition>
+    <!--主题设置-->
     <transition name="slide-up">
       <div class="themes" flex items="center" v-show="show_themes">
         <div @click="setTheme(item.name)" :class="[{active: defaultTheme === item.name},item.name]" box="1" v-for="(item, index) in themeList" :key="index">
@@ -27,9 +29,27 @@
         </div>
       </div>
     </transition>
+    <!--进度设置-->
+    <transition name="slide-up">
+      <div class="slider" v-show="show_slide">
+        <div class="slider-box">
+          <label for="slider">
+            <input type="range" id="slider"
+                   name="slider"
+                   class="ne-range"
+                   :value="progress"
+                   @change="onProgressChange($event.target.value)"
+                   @input="onProgressInput($event.target.value)"
+                   :style="{backgroundSize: `${progress}% 100%`}"
+            />
+          </label>
+        </div>
+        <div class="slide-num">{{bookAvailable ? progress + '%' : '加载中...'}}</div>
+      </div>
+    </transition>
     <div class="footBarBox" flex justify="between" items="center">
       <i class="iconfont icon-mulu"></i>
-      <i class="iconfont icon-jindutiao"></i>
+      <i @click="show_slide_fun" class="iconfont icon-jindutiao"></i>
       <i @click="show_themes_fun" class="iconfont icon-liangdu"></i>
       <i @click="show_font_fun" class="iconfont icon-ziti"></i>
     </div>
@@ -43,14 +63,17 @@ export default {
     return {
       fonts: [12, 14, 16, 18, 20],
       show_font: false,
-      show_themes: false
+      show_themes: false,
+      show_slide: false,
+      progress: 0
     }
   },
   props: {
     defaultFontSize: Number,
     show: Boolean,
     themeList: Array,
-    defaultTheme: String
+    defaultTheme: String,
+    bookAvailable: Boolean
   },
   watch: {
     show: function (val) {
@@ -68,11 +91,21 @@ export default {
       this.show_themes = !this.show_themes
       this.show_font = false
     },
+    show_slide_fun () {
+      this.show_slide = !this.show_slide
+    },
     setFontSize (item) {
       this.$emit('setFontSize', item)
     },
     setTheme (item) {
       this.$emit('setTheme', item)
+    },
+    onProgressChange (value) {
+      this.$emit('onProgressChange', value)
+      console.log(value)
+    },
+    onProgressInput (value) {
+      this.progress = value
     }
   }
 }
@@ -145,15 +178,15 @@ export default {
   .themes{
     min-height: 1rem; position: absolute; width: 100%; left: 0; bottom: 0.9rem;
     color: #999;
+    @include drop-shadow-top; background-color: #fff;
+    &:before{
+      @include bottom-line;
+    }
     a{
       height: 0.6rem; display: block;
     }
     p{
       padding: 0.1rem 0;
-    }
-    @include drop-shadow-top; background-color: #fff;
-    &:before{
-      @include bottom-line;
     }
     div{
       margin: 0 0.1rem;
@@ -182,5 +215,74 @@ export default {
       }
     }
   }
+  /*进度*/
+  .slider{
+    min-height: 1rem; position: absolute; width: 100%; left: 0; bottom: 0.9rem;
+    color: #999;
+    @include drop-shadow-top; background-color: #fff;
+    &:before{
+      @include bottom-line;
+    }
+    .slider-box{
+      padding: 0 0.2rem;
+    }
+  }
 }
+/*说下关键点，thumb相关的是设置滑块按钮（即那个圆点）相关属性，track即那一条滑动条。*/
+
+.ne-range_thumb,
+input.ne-range[type=range]::-webkit-slider-thumb {
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 50%;
+  border: 0/**1px solid #45bd5c*/;
+  background-color: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.21);
+  -webkit-transition: border-color 0.15s, background-color 0.15s;
+  transition: border-color 0.15s, background-color 0.15s;
+  cursor: pointer;
+  background-clip: padding-box;
+  box-sizing: border-box;
+}
+.ne-range_track,
+input.ne-range[type=range] {
+  width: 100%;
+  height: 4px;
+  border-radius: 8px;
+  margin: .8em 0;
+  padding: 0;
+  cursor: pointer;
+  border: 0;
+  /**background-color: #45bd5c;*/
+  background: -webkit-linear-gradient(#797979, #797979) no-repeat #cccccc;
+  background-size: 0% 100%;
+}
+
+/*Real Range*/
+input.ne-range[type=range] {
+  position: relative;
+  outline: 0;
+  -webkit-appearance: none !important;
+}
+input.ne-range[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none !important;
+}
+/*Virtual Range*/
+/*
+.ne-range {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  font-size: 1em;
+}
+.ne-range_thumb {
+  position: absolute;
+  top: 0;
+  margin-left: -0.85em;
+}
+.ne-range_thumb.ondrag > .ne-range_tips {
+  visibility: visible;
+}
+*/
+
 </style>
