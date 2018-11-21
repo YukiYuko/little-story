@@ -47,8 +47,21 @@
         <div class="slide-num">{{bookAvailable ? progress + '%' : '加载中...'}}</div>
       </div>
     </transition>
+    <!--跳转目录-->
+    <transition name="slide-left">
+      <div v-show="show_nav" class="navigation">
+        <div class="navigation-item" :class="{active: href_url === item.href}" flex items="center" @click="jumpTo(item.href)"
+             v-for="(item, index) in navigation" :key="index">
+          {{index + '. ' +item.href}}
+        </div>
+      </div>
+    </transition>
+    <!--背景-->
+    <transition name="fade">
+      <div v-show="show_nav" @click="show_nav_fun" class="dark-shadow"></div>
+    </transition>
     <div class="footBarBox" flex justify="between" items="center">
-      <i class="iconfont icon-mulu"></i>
+      <i @click="show_nav_fun" class="iconfont icon-mulu"></i>
       <i @click="show_slide_fun" class="iconfont icon-jindutiao"></i>
       <i @click="show_themes_fun" class="iconfont icon-liangdu"></i>
       <i @click="show_font_fun" class="iconfont icon-ziti"></i>
@@ -65,6 +78,7 @@ export default {
       show_font: false,
       show_themes: false,
       show_slide: false,
+      show_nav: false,
       progress: 0
     }
   },
@@ -73,7 +87,9 @@ export default {
     show: Boolean,
     themeList: Array,
     defaultTheme: String,
-    bookAvailable: Boolean
+    bookAvailable: Boolean,
+    navigation: Array,
+    href_url: String
   },
   watch: {
     show: function (val) {
@@ -94,11 +110,18 @@ export default {
     show_slide_fun () {
       this.show_slide = !this.show_slide
     },
+    show_nav_fun () {
+      this.show_nav = !this.show_nav
+    },
     setFontSize (item) {
       this.$emit('setFontSize', item)
     },
     setTheme (item) {
       this.$emit('setTheme', item)
+    },
+    jumpTo (href) {
+      this.$emit('jumpTo', href)
+      this.show_nav = false
     },
     onProgressChange (value) {
       this.$emit('onProgressChange', value)
@@ -226,6 +249,30 @@ export default {
     .slider-box{
       padding: 0 0.2rem;
     }
+  }
+  /*目录*/
+  .navigation{
+    width: 70%; position: fixed; left: 0; top: 0; bottom: 0;
+    background-color: #fff; z-index: 999;padding: 0.4rem 0;
+    overflow: auto;
+    .navigation-item{
+      height: 0.9rem; text-align: left;
+      padding: 0 0.3rem; word-break: break-all;
+      position: relative;
+      &.active{
+        color: #ff4242;
+        &:after{
+          @include bottom-line(#ff4242);
+        }
+      }
+      &:after{
+        @include bottom-line();
+      }
+    }
+  }
+  .dark-shadow{
+    position: fixed; left: 0; right: 0; top: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.6);z-index: 998;
   }
 }
 /*说下关键点，thumb相关的是设置滑块按钮（即那个圆点）相关属性，track即那一条滑动条。*/

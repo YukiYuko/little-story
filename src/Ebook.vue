@@ -21,6 +21,9 @@
                :bookAvailable="bookAvailable"
                @onProgressChange="onProgressChange"
                :progress="progress"
+               :navigation="navigation.toc"
+               @jumpTo="jumpTo"
+               :href_url="href"
       ></FootBar>
     </transition>
   </div>
@@ -77,7 +80,9 @@ export default {
         }
       ],
       bookAvailable: false,
-      progress: 0
+      progress: 0,
+      navigation: [],
+      href: ''
     }
   },
   components: {
@@ -107,6 +112,9 @@ export default {
       // 获取locations对象
       // 通过epubjs的钩子函数来实现
       this.book.ready.then(() => {
+        this.navigation = this.book.navigation
+        console.log(this.navigation)
+        this.jumpTo()
         return this.book.locations.generate()
       }).then((result) => {
         this.locations = this.book.locations
@@ -137,6 +145,12 @@ export default {
       const percentage = progress / 100
       const location = percentage > 0 ? this.locations.cfiFromPercentage(percentage) : 0
       this.rendition.display(location)
+    },
+    // 跳转目录 href
+    jumpTo (href) {
+      this.href = href
+      this.rendition.display(href)
+      this.show = false
     },
     // 上一页
     prev () {
